@@ -254,9 +254,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				   uMenuItemState = GetMenuState(hTrackPopUpMenu, 
 					                             ID_POPUPMENU_KEEPSYSTEMAWAKE,
 												 MF_BYCOMMAND);
+				   /*
 				   wsprintf(szScreenSaverMsg, _T("screensaver active: %d, timeout: %lu secs"), 
 					        ssi.bIsScreensSaverActive, ssi.dwScreenSaverTimeOut);
 				   MessageBox(hwnd, szScreenSaverMsg, SZAPPTITLE, MB_OK);
+				   */
 
 				   if((uMenuItemState & MF_CHECKED) == MF_CHECKED)
 				   {
