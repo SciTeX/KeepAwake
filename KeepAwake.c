@@ -1,13 +1,22 @@
+/*
+ * Copytight (2015) CM Jarquin  c.m.jarquin@gmail.com
+ */
+
 #include <windows.h>
 #include <tchar.h>
 #include "utilities.h"
 #include "resource.h"
 
+/* Allow only one instance of the program to run. */
 #define MUTEX_INSTANCE_NAME _T("KeepAwakeMutexObj")
 
-
+/* Message handler for the main application. */
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+/* Message handler for the "About..." dialog box. */
 BOOL CALLBACK AboutDialogProc(HWND, UINT, WPARAM, LPARAM);
+
+/* Checks the status of the screensaver. */
 BOOL IsSystemScreenSaverSet(void);
 
 HANDLE ghMutexInst = NULL;

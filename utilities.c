@@ -1,10 +1,19 @@
+/*
+ * Copytight (2015) CM Jarquin  c.m.jarquin@gmail.com
+ */
+
 #include "utilities.h"
 
+
+/* Get the build version from the date/time
+ * the file was modified. 
+ */
 void GetAppVersionFromSourceFile(const char * lpszFileDate, LPVERSION_INFORMATION vi)
 {
 	char szMonth[5] = {0};
 	strncpy_s(szMonth, 5, lpszFileDate, 3);
 
+	/* Extract the Month from the date. */
 	if(strcmp(szMonth, "Jan") == 0)
 		vi->month = 1;
 	if(strcmp(szMonth, "Feb") == 0)
@@ -30,24 +39,34 @@ void GetAppVersionFromSourceFile(const char * lpszFileDate, LPVERSION_INFORMATIO
 	if(strcmp(szMonth, "Dec") == 0)
 		vi->month = 12;
 
+	/* Extract the year and day of month. */
 	vi->year = atoi(lpszFileDate + 7);
 	vi->mday = (int)atoi(lpszFileDate + 4);
 
+	/* Set the application version. */
 	vi->majorVersion = 1;
 	vi->minorVersion = 0;
 	vi->buildNumber = 160;
+
+	/* Convert the date (YYYY-MM-DD) into a decimal number. */
 	vi->pdate = (((vi->year << 0x04) | vi->month) << 0x05) | vi->mday;
 
 	return;
 }
 
 
+/* Modify the system tray icon depending 
+ * on the current settings of the application. */
 void LoadSystemTrayIcon(HINSTANCE hInst, HWND hWnd, HICON hIcon, 
 	                    UINT uTrayIconID, UINT uCallbackMessage, 
 						LPTSTR lpszTextMsg, DWORD dwEventType)
 {
 	NOTIFYICONDATA nid;
 
+
+	/* First time the application was launched.
+	 * So, load the default icon.
+	 */
 	nid.cbSize = sizeof(NOTIFYICONDATA);
 	nid.hWnd = hWnd;
 	nid.uID = uTrayIconID;
@@ -65,6 +84,9 @@ void LoadSystemTrayIcon(HINSTANCE hInst, HWND hWnd, HICON hIcon,
 		Shell_NotifyIcon(NIM_SETVERSION, &nid);
 	}
 
+	/* The application settings have changed,
+	 * change the icon accordingly.
+	 */
 	if(dwEventType == LSTI_STATECHANGEUPDATE)
 	{
 		nid.hIcon = hIcon; // LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICONSYSTRAYACTIVE));
@@ -78,6 +100,9 @@ void LoadSystemTrayIcon(HINSTANCE hInst, HWND hWnd, HICON hIcon,
 		Shell_NotifyIcon(NIM_MODIFY, &nid);
 	}
 
+	/* The application was terminated. 
+	 * Remove the icon from the system tray.
+	 */
 	if(dwEventType == LSTI_STATECHANGEEXIT)
 	{
 		Shell_NotifyIcon(NIM_DELETE, &nid);
@@ -86,6 +111,8 @@ void LoadSystemTrayIcon(HINSTANCE hInst, HWND hWnd, HICON hIcon,
 	return;
 }
 
+
+/* Get the status of the screensaver. */
 void GetScreenSaverInfo(LPSCREENSAVERINFO lpssi)
 {
 	SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, &lpssi->bIsScreensSaverActive, 0);
