@@ -48,7 +48,12 @@ void GetAppVersionFromSourceFile(const char * lpszFileDate, LPVERSION_INFORMATIO
 	vi->minorVersion = 0;
 	vi->buildNumber = 160;
 
-	/* Convert the date (YYYY-MM-DD) into a decimal number. */
+	/* Convert the date (YYYY-MM-DD) into a decimal number. 
+	 * Formula found in 
+	 * "The Art of Computer Programming: Volume 4, 
+	 * Combinatorial Algorithms: Part 1, 
+	 * Sec. 7.1.3.: Bitwise tricks and techniques, pg. 4 
+	*/
 	vi->pdate = (((vi->year << 0x04) | vi->month) << 0x05) | vi->mday;
 
 	return;
