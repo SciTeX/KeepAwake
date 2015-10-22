@@ -7,7 +7,7 @@
 #include "utilities.h"
 #include "resource.h"
 
-/* Allow only one instance of the program to run. */
+/* Name of the mutex object. */
 #define MUTEX_INSTANCE_NAME _T("KeepAwakeMutexObj")
 
 /* Message handler for the main application. */
@@ -19,8 +19,6 @@ BOOL CALLBACK AboutDialogProc(HWND, UINT, WPARAM, LPARAM);
 /* Checks the status of the screensaver. */
 BOOL IsSystemScreenSaverSet(void);
 
-HANDLE ghMutexInst = NULL;
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	MSG msg;
@@ -29,6 +27,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	TCHAR szErrMsg[1024] = {0};
 
+    /* Handle for named mutex. */
+	HANDLE hMutexInstObj = NULL;
+
+	/* Window creation settings. */
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WndProc;
@@ -46,13 +48,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	/* 
 	 * Only allow one (1) instance to run. 
 	 */
-	if(!(ghMutexInst = OpenMutex(MUTEX_ALL_ACCESS, FALSE, MUTEX_INSTANCE_NAME)))
+	if(!(hMutexInstObj = OpenMutex(MUTEX_ALL_ACCESS, FALSE, MUTEX_INSTANCE_NAME)))
 	{
-		ghMutexInst = CreateMutex(NULL, TRUE, MUTEX_INSTANCE_NAME);
+		hMutexInstObj = CreateMutex(NULL, TRUE, MUTEX_INSTANCE_NAME);
 	}
 	else
 	{
-		MessageBox(NULL, _T("Only one (1) instance of the program is allowed to run."),
+		MessageBox(NULL, _T("Another instance of this program is already running."),
 			       SZAPPTITLE, MB_OK | MB_ICONINFORMATION);
 		return -1;
 	}
@@ -81,6 +83,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
+	/* Release the mutex object. */
+	CloseHandle(hMutexInstObj);
+	ReleaseMutex(hMutexInstObj);
 
 	return msg.wParam;
 }
@@ -148,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   LoadSystemTrayIcon(hInst, hwnd, NULL, TRAY_ICON_RESOURCE_ID, 
 			                  WM_SYSTEMTRAYICONMSG, SZAPPTITLE, 
 							  LSTI_STATEINITIALIZE);
-	   return 0;
+	   break;
 
 	   case WM_COMMAND:
 		   switch(LOWORD(wParam))
@@ -263,11 +269,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				   uMenuItemState = GetMenuState(hTrackPopUpMenu, 
 					                             ID_POPUPMENU_KEEPSYSTEMAWAKE,
 												 MF_BYCOMMAND);
-				   /*
+				   
 				   wsprintf(szScreenSaverMsg, _T("screensaver active: %d, timeout: %lu secs"), 
 					        ssi.bIsScreensSaverActive, ssi.dwScreenSaverTimeOut);
 				   MessageBox(hwnd, szScreenSaverMsg, SZAPPTITLE, MB_OK);
-				   */
+				   
 
 				   if((uMenuItemState & MF_CHECKED) == MF_CHECKED)
 				   {
@@ -281,7 +287,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						   SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, &ssi.bIsScreensSaverActive, SPIF_UPDATEINIFILE);
 						   //SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, TRUE, &ssi.dwScreenSaverTimeOut, SPIF_UPDATEINIFILE);
 
-				           PostQuitMessage(WM_QUIT);
+				           PostQuitMessage(0);
+						   //DestroyWindow(hwnd);
 					   }
 				   }
 				   else
@@ -291,8 +298,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				       
 					   SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, &ssi.bIsScreensSaverActive, SPIF_UPDATEINIFILE);
 					   //SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, TRUE, &ssi.dwScreenSaverTimeOut, SPIF_UPDATEINIFILE);
-
-		               DestroyWindow(hwnd);
+					   
+		               PostQuitMessage(0);
 				   }
 			   }
 			   break;
@@ -302,7 +309,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					         hwnd, AboutDialogProc);
 			   break;
 		   }
-	   return 0;
+	   break;
 
        case WM_SYSTEMTRAYICONMSG:
 		   switch(lParam)
@@ -319,19 +326,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   }
 	   return 0;
 
-	   case WM_CLOSE:
-	   {   
+	   /*
+	   case WM_CLOSE:   
 		   GetScreenSaverInfo(&ssi);
 		   SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, &ssi.bIsScreensSaverActive, SPIF_UPDATEINIFILE);
 		   //SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, TRUE, &ssi.dwScreenSaverTimeOut, SPIF_UPDATEINIFILE);
 		   LoadSystemTrayIcon(hInst, hwnd, NULL, TRAY_ICON_RESOURCE_ID, 
 			                  WM_SYSTEMTRAYICONMSG, NULL, LSTI_STATECHANGEEXIT);
 		   DestroyWindow(hwnd);
-	   }
-	   return 0;
+		   CloseWindow(hwnd);
+	   break;
+	   */
 
 	   case WM_DESTROY:
-	   {
 		   GetScreenSaverInfo(&ssi);
 		   SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, &ssi.bIsScreensSaverActive, SPIF_UPDATEINIFILE);
 		   //SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, TRUE, &ssi.dwScreenSaverTimeOut, SPIF_UPDATEINIFILE);
@@ -339,10 +346,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   LoadSystemTrayIcon(hInst, hwnd, NULL, TRAY_ICON_RESOURCE_ID, 
 			                  WM_SYSTEMTRAYICONMSG, NULL, 
 							  LSTI_STATECHANGEEXIT);
-		   DestroyWindow(hwnd);
-	  }
 
-	   return 0;
+		   CloseWindow(hwnd);
+		   DestroyWindow(hwnd);
+	  break;
 
 	   /*
 	   case WM_POWERBROADCAST:
@@ -387,8 +394,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	   default:
 		   return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
-
-	return 0;
 }
 
 BOOL IsSystemScreenSaverSet(void)
@@ -429,6 +434,9 @@ BOOL IsSystemScreenSaverSet(void)
 	return bScreenSaverSet;
 }
 
+/*
+ * About dialog windows message handler.
+ */
 BOOL CALLBACK AboutDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static HWND hStaticCtrlVerionText;
@@ -447,7 +455,7 @@ BOOL CALLBACK AboutDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 			hStaticCtrlVerionText = GetDlgItem(hDlg, 
 				                               IDC_STATIC_APPNAMEVERSION);
 
-			wsprintf(szModuleExeName, TEXT("%s %d.%d.%d.[%ld]"), 
+			wsprintf(szModuleExeName, TEXT("%s %d.%d.%d.%ld"), 
 				     SZAPPTITLE, vi.majorVersion, vi.minorVersion,
 					 vi.buildNumber, vi.pdate);
 
