@@ -46,7 +46,7 @@ void GetAppVersionFromSourceFile(const char * lpszFileDate, LPVERSION_INFORMATIO
 	/* Set the application version. */
 	vi->majorVersion = 1;
 	vi->minorVersion = 0;
-	vi->buildNumber = 160;
+	vi->buildNumber = 200;
 
 	/* Convert the date (YYYY-MM-DD) into a decimal number. 
 	 * Formula found in 

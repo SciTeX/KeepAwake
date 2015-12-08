@@ -21,12 +21,18 @@
     <ClCompile Include="utilities.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="powermgmt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="powermgmt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

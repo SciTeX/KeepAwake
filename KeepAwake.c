@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include "utilities.h"
+#include "powermgmt.h"
 #include "resource.h"
 
 /* Name of the mutex object. */
@@ -147,6 +148,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   hTrackPopUpMenu = GetSubMenu(hCtxMenu, 0);
 
 		   GetScreenSaverInfo(&ssi);
+
+		   DeviceIsRunningOnBatteries();
 
 		   /* 
 		    * Minimize to the system notification area.
