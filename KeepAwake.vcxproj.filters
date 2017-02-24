@@ -21,9 +21,6 @@
     <ClCompile Include="utilities.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="powermgmt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
