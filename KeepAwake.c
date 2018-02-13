@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include "utilities.h"
-#include "powermgmt.h"
+//#include "powermgmt.h"
 #include "resource.h"
 
 /* Name of the mutex object. */
@@ -118,6 +118,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   /* 
 		    * Check to see if the screensaver is set. 
 			*/
+		   /*
 		   if(!IsSystemScreenSaverSet())
 		   {
 			   MessageBox(hwnd, 
@@ -130,6 +131,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			   
 			   return -1;
 		   }
+		   */
 
 		   hInst = ((LPCREATESTRUCT)lParam)->hInstance;
 
@@ -149,7 +151,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		   GetScreenSaverInfo(&ssi);
 
-		   DeviceIsRunningOnBatteries();
+		   //DeviceIsRunningOnBatteries();
 
 		   /* 
 		    * Minimize to the system notification area.

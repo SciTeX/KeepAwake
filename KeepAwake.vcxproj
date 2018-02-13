@@ -79,11 +79,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="KeepAwake.c" />
-    <ClCompile Include="powermgmt.c" />
+    <ClCompile Include="powermgmt.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="utilities.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="powermgmt.h" />
+    <ClInclude Include="powermgmt.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
