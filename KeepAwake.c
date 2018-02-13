@@ -4,6 +4,7 @@
 
 #include <windows.h>
 #include <tchar.h>
+#include <dbt.h>
 #include "utilities.h"
 //#include "powermgmt.h"
 #include "resource.h"
@@ -355,7 +356,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   DestroyWindow(hwnd);
 	  break;
 
-	   /*
+	  
 	   case WM_POWERBROADCAST:
 	   {
 		   switch(wParam)
@@ -393,7 +394,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   }
 
 	   return TRUE;
-	}*/
+	}
 
 	   default:
 		   return DefWindowProc(hwnd, uMsg, wParam, lParam);
