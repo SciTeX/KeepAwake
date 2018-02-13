@@ -150,12 +150,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		   hTrackPopUpMenu = GetSubMenu(hCtxMenu, 0);
 
 		   GetScreenSaverInfo(&ssi);
-
-<<<<<<< HEAD
 		   //DeviceIsRunningOnBatteries();
-=======
-		 //  DeviceIsRunningOnBatteries();
->>>>>>> b7a336baedda79e73006f51d30b89fbc07788d22
 
 		   /* 
 		    * Minimize to the system notification area.
