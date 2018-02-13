@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	else
 	{
-		MessageBox(NULL, _T("Another instance of this program is already running."),
+		MessageBox(NULL, _T("Another instance of this program is already running. PID:"),
 			       SZAPPTITLE, MB_OK | MB_ICONINFORMATION);
 		return -1;
 	}
@@ -151,7 +151,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		   GetScreenSaverInfo(&ssi);
 
+<<<<<<< HEAD
 		   //DeviceIsRunningOnBatteries();
+=======
+		 //  DeviceIsRunningOnBatteries();
+>>>>>>> b7a336baedda79e73006f51d30b89fbc07788d22
 
 		   /* 
 		    * Minimize to the system notification area.
@@ -399,6 +403,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	   default:
 		   return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 BOOL IsSystemScreenSaverSet(void)
